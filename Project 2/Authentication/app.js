@@ -1,13 +1,23 @@
 const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
+const app = express();
+dotenv.config();
 
 // Import routes    
 const authRouter = require('./routes/authRouter');
 
-dotenv.config();
-const app = express();
 app.use(express.json());
 
+// To serve static files (CSS, JS, Images)
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    console.log(req.url, req.method)
+    next();
+})
+
+//Handle Routes
 app.use(authRouter);
 
 // Global error handler
@@ -16,7 +26,5 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Server error' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}`);
-});
+exports.app = app;
+

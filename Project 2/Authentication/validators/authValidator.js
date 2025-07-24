@@ -22,6 +22,12 @@ const userValidator = [
 
     body('email')
         .notEmpty().withMessage('Email is required!').bail()
+        .custom((value, { req }) => {
+            if (value === req.body.email) {
+                throw new Error('Entered email is already used!');
+            }
+            return true;
+        })
         .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/).withMessage('Enter a valid email address!'),
 ];
 
